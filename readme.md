@@ -1,53 +1,41 @@
-# Aldaron's Device Interface / Screen
-[Aldaron's Device Interface / Screen (adi_screen)](http://plopgrizzly.com/adi_screen)
-is a library developed by [Plop Grizzly](http://plopgrizzly.com)
-for interfacing with a computer screen or phone screen to render graphics.
-It can be used for either making video games or applications.
-
-[Cargo](https://crates.io/crates/adi_screen) /
-[Documentation](https://docs.rs/adi_screen) /
-[Change Log](http://plopgrizzly.com/adi_screen/changelog.html)
+# [Aldaron's Device Interface / Screen](https://crates.io/crates/adi_screen)
+Render graphics to a computer or phone screen, and get input.  Great for both
+video games and apps!
 
 ## Features
-**adi_screen**'s current features:
 * Create a window
 * Render graphics with sprites
 * Obtain user input
 * Sprites auto depth-sort for fast rendering.
 * Text Rendering
+* Switch between OpenGL, OpenGLES or Vulkan depending on what's available.
+* Switch between XCB, or WinAPI depending on what's available.
 
-**adi_screen**'s planned features:
-* Fully functioning octree
+## [Contributing](http://plopgrizzly.com/contributing/en#contributing)
 
-## Support
-**adi_screen**'s current support:
-* XCB + Vulkan, XCB Input
-* WinAPI + Vulkan, WinAPI Input (except TouchPad)
-* WinAPI + OpenGL, WinAPI Input
-* XCB + OpenGLES, XCB Input
-* XCB + OpenGL, XCB Input
+## Roadmap to 1.0 (Future Features)
+* Custom shaders
+* Fix Windows touchpad not working for scroll events.
+* Support MacOS + Metal/(or MoltenVK?)
+* Support Android + OpenGLES
+* Support Android + Vulkan
+* Support Touchscreen on Windows 
+* Support Touchscreen on Linux w/ XCB
+* Support Wayland + OpenGLES & Vulkan
+* Support Touchscreen on Linux w/ Wayland
+* Support Raspberry Pi Direct To Display + Vulkan
+* Support Web Assembly + WebGL
 
-**adi_screen**'s planned support:
-* MacOS Window + OpenGL
-* MacOS Window + Metal/(or MoltenVK?)
-* Android + OpenGLES
-* Android + Vulkan
-* WinAPI TouchPad
-* WinAPI Touchscreen
-* XCB Touchscreen
-* Wayland + OpenGLES
-* Wayland + Vulkan
-* Wayland Touchscreen
-* Raspberry Pi Direct To Display + Vulkan
-* Web Assembly + WebGL
+## Change Log
+### 0.10
+* Octree support is no longer built in to this library.  If you need it, use the
+Cala Physics Engine instead or directly depend on AMI.
+* Update to newest adi_gpu.
 
-### To Use Vulkan on Windows
-Download the vulkan runtime installer from
-https://codeload.github.com/plopgrizzly/vulkan-runtime-installer/zip/master
-Then, run VulkanRT-1.0.46.0-Installer.exe inside the downloaded zip file, and go
-through the install process.
+### 0.9
+* Fixed `sprites_fog!()` and `sprites_gui!()` macros; they're now like `sprite`.
 
-# Contributing
-If you'd like to help implement functions for unsupported platforms, fix bugs,
-improve the API or improve the Documentation, then contact me at
-jeron.lau@plopgrizzly.com. I'll appreciate any help.
+### 0.8
+* Easy model generation.
+
+## Developed by [Plop Grizzly](http://plopgrizzly.com)

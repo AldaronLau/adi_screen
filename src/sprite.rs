@@ -1,55 +1,13 @@
-// "adi_screen" crate - Licensed under the MIT LICENSE
-//  * Copyright (c) 2017-2018  Jeron A. Lau <jeron.lau@plopgrizzly.com>
+// "adi_screen" - Aldaron's Device Interface / Screen
+//
+// Copyright Jeron A. Lau 2017 - 2018.
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at
+// https://www.boost.org/LICENSE_1_0.txt)
 
 use Window;
 use adi_gpu::{ Shape };
 use ami::{ Mat4, IDENTITY };
-
-/// Macro to create multiple sprites in an array.
-///
-/// # Example
-/// ```
-/// let mut window = WindowBuilder::new("Window Name", None).finish();
-/// 
-/// textures!(window, aci_png::decode,
-/// 	"res/texture0.png", // 0
-/// 	"res/texture1.png", // 1
-/// );
-/// 
-/// models!(window, "res/model.data");
-/// 
-/// let sprites = sprites!(window,
-/// 		(0/*model 0*/, Some(0/*texture 0*/),
-/// 	Transform::new().translate(0.0, -0.5, 2.0), false),
-/// 		(0/*model 0*/, Some(0/*texture 0*/),
-/// 	Transform::new().translate(0.0, -4.5, 2.0), false));
-/// ```
-#[macro_export] macro_rules! sprites {
-	($window:expr, $( $x:expr ),*) => {
-		[ $( $crate::Sprite::new($window, $x.0, $x.1, $x.2, $x.3, false,
-			true) ),* ]
-	}
-}
-
-/// Macro to create multiple fog-affected sprites in an array.
-/// # Example
-/// See [`sprites!()`](macro.sprites.html)
-#[macro_export] macro_rules! sprites_fog {
-	($window:expr, $( $x:expr ),*) => {
-		[ $( $crate::Sprite::new($window, $x.0, $x.1, $x.2, $x.3, true,
-			true) ),* ]
-	}
-}
-
-/// Macro to create multiple non-camera affected sprites in an array.
-/// # Example
-/// See [`sprites!()`](macro.sprites.html)
-#[macro_export] macro_rules! sprites_gui {
-	($window:expr, $( $x:expr ),*) => {
-		[ $( $crate::Sprite::new($window, $x.0, $x.1, $x.2, $x.3, false,
-			false) ),* ]
-	}
-}
 
 #[must_use]
 /// Sprite represents anything that is rendered onto the screen.
@@ -107,6 +65,7 @@ impl Sprite {
 }
 
 /// Transform represents a transformation matrix.
+#[derive(Copy, Clone)]
 pub struct Transform(Mat4);
 
 impl Transform {
@@ -142,10 +101,8 @@ impl Transform {
 	}
 
 	/// Apply a TransformApply onto instance i of Sprite.
-	pub fn apply(self, window: &mut Window, sprite: &mut Sprite)
-		-> Transform
-	{
-		window.window.transform(&mut sprite.0, self.0);
+	pub fn apply(self, window: &mut Window, sprite: &Sprite) -> Transform {
+		window.window.transform(&sprite.0, self.0);
 
 		self
 	}

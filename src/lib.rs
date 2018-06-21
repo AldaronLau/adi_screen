@@ -1,8 +1,12 @@
-// "adi_screen" crate - Licensed under the MIT LICENSE
-//  * Copyright (c) 2017-2018  Jeron A. Lau <jeron.lau@plopgrizzly.com>
+// "adi_screen" - Aldaron's Device Interface / Screen
 //
-//! Aldaron's Device Interface / Screen is a library developed by Plop Grizzly
-//! for interfacing with a computer screen or phone screen to render graphics.
+// Copyright Jeron A. Lau 2017 - 2018.
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at
+// https://www.boost.org/LICENSE_1_0.txt)
+//
+//! Render graphics to a computer or phone screen, and get input.  Great for
+//! both video games and apps!
 
 #![warn(missing_docs)]
 #![doc(html_logo_url = "http://plopgrizzly.com/adi_screen/icon.png",
@@ -14,6 +18,8 @@ mod sprite;
 mod gui;
 mod texture;
 mod gpu_data;
+#[doc(hidden)]
+pub mod prelude;
 
 pub use window::{ WindowBuilder, Window };
 pub use sprite::{ Sprite, Transform };
