@@ -21,19 +21,18 @@ mod gpu_data;
 #[doc(hidden)]
 pub mod prelude;
 
+pub use prelude::{ Transform, Vec3 };
 pub use window::{ WindowBuilder, Window };
-pub use sprite::{ Sprite, Transform };
+pub use sprite::{ Sprite };
 pub use gui::{ Gui, Widget };
 pub use texture::Texture;
 pub use gpu_data::{ Model, ModelBuilder };
 
-extern crate ami;
 extern crate adi_gpu;
 extern crate aci_png;
 extern crate fonterator;
 extern crate adi_clock;
 
-pub use adi_gpu::{ Input };
-pub use ami::{ Mat4, IDENTITY };
+pub use adi_gpu::{ Input, Mat4 };
 pub use adi_gpu::afi::*;
 pub use adi_clock::*;

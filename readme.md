@@ -27,6 +27,9 @@ video games and apps!
 * Support Web Assembly + WebGL
 
 ## Change Log
+### 0.11
+* Angles are now in radians (0-2 pi) instead of circles (0-1)
+
 ### 0.10
 * Octree support is no longer built in to this library.  If you need it, use the
 Cala Physics Engine instead or directly depend on AMI.

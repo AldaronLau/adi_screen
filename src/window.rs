@@ -12,6 +12,7 @@ use aci_png;
 use Texture;
 use Graphic;
 use Model;
+use Vec3;
 
 /// A builder for `Window`.
 pub struct WindowBuilder {
@@ -128,7 +129,7 @@ impl Window {
 	}
 
 	/// Adjust the location and direction of the camera.
-	pub fn camera(&mut self, xyz: (f32,f32,f32), rotate_xyz: (f32,f32,f32)) {
+	pub fn camera(&mut self, xyz: Vec3, rotate_xyz: Vec3) {
 		self.window.camera(xyz, rotate_xyz);
 	}
 

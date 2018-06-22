@@ -7,7 +7,8 @@
 
 use adi_gpu;
 use Window;
-use ami::{ Mat4, IDENTITY, Vec4 };
+use adi_gpu::*;
+use Transform;
 
 /// Macro to load models from files for the window.
 ///
@@ -16,7 +17,7 @@ use ami::{ Mat4, IDENTITY, Vec4 };
 #[macro_export] macro_rules! models {
 	($window:expr, $( $x:expr ),*) => { {
 		use $crate::ModelBuilder as model;
-		use $crate::IDENTITY;
+		const IDENTITY: Transform =  $crate::Transform::IDENTITY;
 
 		let a = vec![ $( include!($x).finish($window) ),* ];
 
@@ -45,7 +46,7 @@ pub struct ModelBuilder {
 	// A list of the fans to draw (start vertex, vertex count)
 	fans: Vec<(u32, u32)>,
 	//
-	mat4: Mat4,
+	mat4: Transform,
 }
 
 impl ModelBuilder {
@@ -61,12 +62,12 @@ impl ModelBuilder {
 			color: None,
 			opacity: None,
 			fans: vec![],
-			mat4: IDENTITY,
+			mat4: Transform::IDENTITY,
 		}
 	}
 
 	/// Set transformation matrix
-	pub fn m(mut self, mat4: Mat4) -> Self {
+	pub fn m(mut self, mat4: Transform) -> Self {
 		self.mat4 = mat4;
 
 		self
@@ -112,14 +113,14 @@ impl ModelBuilder {
 		let origin = self.ts.pop().unwrap();
 		self.ts.insert(0, origin);
 		self = self.shape();
-		self.mat4 = IDENTITY;
+		self.mat4 = Transform::IDENTITY;
 		self
 	}
 
 	/// Add a face to the model, this unapplies the transformation matrix.
 	pub fn f(mut self) -> Self {
 		self = self.shape();
-		self.mat4 = IDENTITY;
+		self.mat4 = Transform::IDENTITY;
 		self
 	}
 
@@ -133,7 +134,7 @@ impl ModelBuilder {
 		self.fans.push((start as u32, length as u32));
 
 		for i in &self.ts {
-			let v = self.mat4 * Vec4::new(i[0], i[1], i[2], i[3]);
+			let v = self.mat4.0 * Vec4::new(i[0], i[1], i[2], i[3]);
 
 			self.vertices.push(v.x as f32);
 			self.vertices.push(v.y as f32);
