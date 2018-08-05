@@ -29,6 +29,9 @@ This project is part of [ADI](https://crates.io/crates/adi).
 * Support Web Assembly + WebGL
 
 ## Change Log
+### 0.12
+* Added Widget / GUI API (WIP).
+
 ### 0.11
 * Angles are now in radians (0-2 pi) instead of circles (0-1)
 

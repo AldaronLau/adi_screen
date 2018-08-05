@@ -36,7 +36,7 @@ pub enum Widget<'a> {
 // TODO: make into tree-generating macros.
 impl<'a> Widget<'a> {
 	/// Get widget for a button widget.
-	pub fn button(widget: &'a Widget<'a>, run: &'a mut FnMut())
+	pub fn button(widget: &'a Widget<'a>, _run: &'a mut FnMut())
 		-> Widget<'a>
 	{
 		Widget::Listen(widget, Box::new(move |input| {
