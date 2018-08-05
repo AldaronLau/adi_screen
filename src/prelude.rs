@@ -1,8 +1,6 @@
-// "adi_screen" - Aldaron's Device Interface / Screen
-//
 // Copyright Jeron A. Lau 2017 - 2018.
-// Distributed under the Boost Software License, Version 1.0.
-// (See accompanying file LICENSE_1_0.txt or copy at
+// Dual-licensed under either the MIT License or the Boost Software License,
+// Version 1.0.  (See accompanying file LICENSE_1_0.txt or copy at
 // https://www.boost.org/LICENSE_1_0.txt)
 
 pub use adi_gpu::*;
@@ -62,8 +60,14 @@ pub use adi_gpu::*;
 /// increases by 1.  See: [`sprites!()`](macro.sprites.html) for example.
 #[macro_export] macro_rules! textures {
 	($window:expr, $decode:expr, $( $x:expr ),*) => { {
-		let a = vec![ $( $crate::Texture::new($window,
-			$decode(include_bytes!($x)).unwrap()) ),* ];
+		let a = vec![ $( {
+			let mut video = $decode(include_bytes!($x), afi::Rgba)
+				.unwrap();
+			let wh = video.wh();
+			let px = video.pop().unwrap();
+
+			$crate::Texture::new($window, wh, &px)
+		} ),* ];
 
 		$window.textures(a);
 	} }

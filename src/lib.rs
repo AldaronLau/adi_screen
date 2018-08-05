@@ -1,10 +1,8 @@
-// "adi_screen" - Aldaron's Device Interface / Screen
-//
 // Copyright Jeron A. Lau 2017 - 2018.
-// Distributed under the Boost Software License, Version 1.0.
-// (See accompanying file LICENSE_1_0.txt or copy at
+// Dual-licensed under either the MIT License or the Boost Software License,
+// Version 1.0.  (See accompanying file LICENSE_1_0.txt or copy at
 // https://www.boost.org/LICENSE_1_0.txt)
-//
+
 //! Render graphics to a computer or phone screen, and get input.  Great for
 //! both video games and apps!
 
@@ -22,15 +20,15 @@ mod gpu_data;
 pub mod prelude;
 
 pub use prelude::{ Transform, Vec3 };
-pub use window::{ WindowBuilder, Window };
+pub use window::{ WindowBuilder, Window, Widget };
 pub use sprite::{ Sprite };
-pub use gui::{ Gui, Widget };
 pub use texture::Texture;
 pub use gpu_data::{ Model, ModelBuilder };
 
 extern crate adi_gpu;
 extern crate aci_png;
 extern crate fonterator;
+extern crate footile;
 extern crate adi_clock;
 
 pub use adi_gpu::{ Input, Mat4 };

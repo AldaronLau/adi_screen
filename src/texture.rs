@@ -1,57 +1,38 @@
-// "adi_screen" - Aldaron's Device Interface / Screen
-//
 // Copyright Jeron A. Lau 2017 - 2018.
-// Distributed under the Boost Software License, Version 1.0.
-// (See accompanying file LICENSE_1_0.txt or copy at
+// Dual-licensed under either the MIT License or the Boost Software License,
+// Version 1.0.  (See accompanying file LICENSE_1_0.txt or copy at
 // https://www.boost.org/LICENSE_1_0.txt)
 
-use Graphic;
-use GraphicBuilder;
-use GraphicDecodeErr;
+use VFrame;
 use adi_gpu;
 use Window;
 
 /// A reference to an image in GPU memory.
-pub struct Texture(pub(crate) adi_gpu::Texture, pub(crate) u32, pub(crate) u32);
+pub struct Texture(pub(crate) adi_gpu::Texture, pub(crate) u16, pub(crate) u16);
 
 impl Texture {
 	#[doc(hidden)]
-	pub fn new(window: &mut Window, image_data: Graphic) -> Texture {
-		let (w, h, _) = image_data.as_slice();
-
-		Texture(window.window.texture(&image_data), w, h)
+	pub fn new(window: &mut Window, wh: (u16,u16), image_data: &VFrame)
+		-> Texture
+	{
+		Texture(window.window.texture(wh, image_data), wh.0, wh.1)
 	}
 
 	/// Load an empty texture into gpu memory.
-	pub fn empty(window: &mut Window, w: u32, h: u32) -> Texture {
-		let size = (w as usize) * (h as usize);
-		let graphic = GraphicBuilder::new().rgba(w, h, vec![0; size]);
-
-		Texture(window.window.texture(&graphic), w, h)
-	}
-
-	/// Load multiple texture from graphic data into gpu memory.
-	pub fn new_vec<F>(window: &mut Window,
-		loader: F, files: &[&[u8]])
-		-> Result<Vec<Texture>, GraphicDecodeErr>
-		where F: Fn(&[u8]) -> Result<Graphic, GraphicDecodeErr>
-	{
-		let mut textures = Vec::new();
-
-		for i in files {
-			textures.push(Texture::new(window, loader(i)?));
-		}
-
-		Ok(textures)
+	pub fn empty(window: &mut Window, wh: (u16,u16)) -> Texture {
+		let size = (wh.0 as usize) * (wh.1 as usize);
+		Texture(window.window.texture(wh, &VFrame(vec![0; 4 * size])),
+			wh.0, wh.1)
 	}
 
 	/// Get the width and height of the texture.
-	pub fn wh(&self) -> (u32, u32) {
+	pub fn wh(&self) -> (u16, u16) {
 		(self.1, self.2)
 	}
 
 	/// Set the pixels for the texture.
-	pub fn set(&mut self, window: &mut Window, data: &[u32]) -> () {
-		window.window.set_texture(&mut self.0, data);
+	pub fn set(&mut self, window: &mut Window, wh: (u16,u16), data: &VFrame)
+	{
+		window.window.set_texture(&mut self.0, wh, data);
 	}
 }

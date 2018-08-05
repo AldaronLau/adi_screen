@@ -1,6 +1,10 @@
+[![Plop Grizzly](https://plopgrizzly.com/images/logo-bar.png)](https://plopgrizzly.com)
+
 # [Aldaron's Device Interface / Screen](https://crates.io/crates/adi_screen)
 Render graphics to a computer or phone screen, and get input.  Great for both
 video games and apps!
+
+This project is part of [ADI](https://crates.io/crates/adi).
 
 ## Features
 * Create a window
@@ -10,8 +14,6 @@ video games and apps!
 * Text Rendering
 * Switch between OpenGL, OpenGLES or Vulkan depending on what's available.
 * Switch between XCB, or WinAPI depending on what's available.
-
-## [Contributing](http://plopgrizzly.com/contributing/en#contributing)
 
 ## Roadmap to 1.0 (Future Features)
 * Custom shaders
@@ -40,5 +42,3 @@ Cala Physics Engine instead or directly depend on AMI.
 
 ### 0.8
 * Easy model generation.
-
-## Developed by [Plop Grizzly](http://plopgrizzly.com)
