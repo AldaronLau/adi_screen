@@ -33,4 +33,11 @@ adi_clock = "0.3"
 adi_gpu = "0.11"
 aci_png = "0.7"
 fonterator = "0.1"
-footile = { path = "footile", version = "0.0.10" } # TODO: Use real footile.
+# TODO: This is for footile.
+libc = "0.2"
+palette = "0.2"
+# footile = { version = "0.0.10", path = "footile" } # TODO: Use real footile.
+
+# TODO: This is for footile.
+[build-dependencies]
+cc = "1.0"

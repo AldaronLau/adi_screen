@@ -28,7 +28,8 @@ pub use gpu_data::{ Model, ModelBuilder };
 extern crate adi_gpu;
 extern crate aci_png;
 extern crate fonterator;
-extern crate footile;
+#[allow(unused)]
+mod footile; // TODO: extern crate
 extern crate adi_clock;
 
 pub use adi_gpu::{ Input, Mat4 };
