@@ -5,7 +5,7 @@
 
 use adi_clock::{ Pulse, Clock };
 use Input;
-use adi_gpu::{ Display, new_display, afi::VFrame };
+use awi::render::{ Display, new_display, afi::VFrame };
 use aci_png;
 use Texture;
 use Video;
@@ -76,19 +76,15 @@ impl<'a> Widget<'a> {
 /// A builder for `Window`.
 pub struct WindowBuilder {
 	fog: Option<(f32, f32)>,
-	rgb: (f32, f32, f32),
-	name: String,
-	icon: Option<Video>,
+	rgb: (u8, u8, u8),
 }
 
 impl WindowBuilder {
 	/// A new `WindowBuilder`.
-	pub fn new(name: &str, icon: Option<Video>) -> Self {
+	pub fn new() -> Self {
 		WindowBuilder {
 			fog: None,
-			rgb: (1.0, 1.0, 1.0),
-			name: name.to_string(),
-			icon,
+			rgb: (0, 127, 0),
 		}
 	}
 
@@ -99,25 +95,18 @@ impl WindowBuilder {
 	}
 
 	/// Set background color, white by default.
-	pub fn background(mut self, r: f32, g: f32, b: f32) -> Self {
-		self.rgb = (r, g, b);
+	pub fn background(mut self, rgb: (u8, u8, u8)) -> Self {
+		self.rgb = rgb;
 		self
 	}
 
 	/// Finish building the `Window`.
 	pub fn finish<'a>(self) -> Window<'a> {
-		let mut native = if let Some(i) = self.icon {
-			new_display(&self.name, i)
-		} else {
-			new_display(&self.name, aci_png::decode(
-				include_bytes!("../res/logo.png"),
-				::adi_gpu::afi::Rgba,
-			).unwrap())
-		}.unwrap();
+		let mut native = new_display().unwrap();
 
 		let mut img = aci_png::decode(
 			include_bytes!("../res/button.png"),
-			::adi_gpu::afi::Rgba
+			::awi::render::afi::Rgba
 		).unwrap();
 		let wh = img.wh();
 		let px = img.pop().unwrap();
@@ -214,7 +203,7 @@ impl<'a> Window<'a> {
 	}
 
 	/// Set the background color of the window.
-	pub fn background(&mut self, rgb: (f32, f32, f32)) -> () {
+	pub fn background(&mut self, rgb: (u8, u8, u8)) -> () {
 		self.window.color(rgb);
 	}
 

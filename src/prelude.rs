@@ -3,7 +3,7 @@
 // Version 1.0.  (See accompanying file LICENSE_1_0.txt or copy at
 // https://www.boost.org/LICENSE_1_0.txt)
 
-pub use adi_gpu::*;
+pub use awi::render::*;
 
 /// Macro to create multiple sprites in an array.
 ///

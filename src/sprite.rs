@@ -4,7 +4,7 @@
 // https://www.boost.org/LICENSE_1_0.txt)
 
 use Window;
-use adi_gpu::*;
+use awi::render::*;
 
 #[must_use]
 /// Sprite represents anything that is rendered onto the screen.

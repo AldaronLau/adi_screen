@@ -4,11 +4,11 @@
 // https://www.boost.org/LICENSE_1_0.txt)
 
 use VFrame;
-use adi_gpu;
+use awi::render::Texture as AwiTexture;
 use Window;
 
 /// A reference to an image in GPU memory.
-pub struct Texture(pub(crate) adi_gpu::Texture, pub(crate) u16, pub(crate) u16);
+pub struct Texture(pub(crate) AwiTexture, pub(crate) u16, pub(crate) u16);
 
 impl Texture {
 	#[doc(hidden)]

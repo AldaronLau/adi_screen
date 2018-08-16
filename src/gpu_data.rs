@@ -3,9 +3,9 @@
 // Version 1.0.  (See accompanying file LICENSE_1_0.txt or copy at
 // https://www.boost.org/LICENSE_1_0.txt)
 
-use adi_gpu;
+use awi::render as adi_gpu;
 use Window;
-use adi_gpu::*;
+use awi::render::*;
 use Transform;
 
 /// Macro to load models from files for the window.

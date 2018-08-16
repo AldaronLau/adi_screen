@@ -25,13 +25,13 @@ pub use sprite::{ Sprite };
 pub use texture::Texture;
 pub use gpu_data::{ Model, ModelBuilder };
 
-extern crate adi_gpu;
+extern crate awi;
 extern crate aci_png;
 extern crate fonterator;
 #[allow(unused)]
 mod footile; // TODO: extern crate
 extern crate adi_clock;
 
-pub use adi_gpu::{ Input, Mat4 };
-pub use adi_gpu::afi::*;
+pub use awi::render::{ Input, Mat4 };
+pub use awi::render::afi::*;
 pub use adi_clock::*;
