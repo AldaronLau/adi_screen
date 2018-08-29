@@ -11,27 +11,27 @@
 	html_favicon_url = "http://plopgrizzly.com/adi_screen/icon.ico",
 	html_root_url = "http://plopgrizzly.com/adi_screen/")]
 
-mod window;
+/*mod window;
 mod sprite;
 mod gui;
 mod texture;
-mod gpu_data;
 #[doc(hidden)]
-pub mod prelude;
+pub mod prelude;*/
 
-pub use prelude::{ Transform, Vec3 };
-pub use window::{ WindowBuilder, Window, Widget };
+/*pub use prelude::{ Transform, Vec3 };
+pub use window::{ Window, Widget };
 pub use sprite::{ Sprite };
 pub use texture::Texture;
-pub use gpu_data::{ Model, ModelBuilder };
+pub use gpu_data::{ Model, ModelBuilder };*/
+
+mod gpu_data;
+
+pub mod prelude;
 
 extern crate awi;
 extern crate aci_png;
 extern crate fonterator;
-#[allow(unused)]
-mod footile; // TODO: extern crate
-extern crate adi_clock;
 
-pub use awi::render::{ Input, Mat4 };
+pub use awi::screen::{Screen, ScreenError, Shape, Gradient, Model, Texture, TexCoords};
+pub use awi::render::{Event, Mat4, Transform};
 pub use awi::render::afi::*;
-pub use adi_clock::*;

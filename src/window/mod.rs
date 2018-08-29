@@ -3,26 +3,25 @@
 // Version 1.0.  (See accompanying file LICENSE_1_0.txt or copy at
 // https://www.boost.org/LICENSE_1_0.txt)
 
-use adi_clock::{ Pulse, Clock };
-use Input;
-use awi::render::{ Display, new_display, afi::VFrame };
+use Event;
+use awi::render::afi::{VFrame, PathOp};
+pub use awi::screen::{Screen as AwiScreen, ScreenError};
 use aci_png;
 use Texture;
-use Video;
 use Model;
 use Vec3;
 use Sprite;
 use Transform;
-use fonterator::PathOp;
 
-mod surface;
+/// Activity
+pub type Activity = fn(screen: Screen, event: Event, dt: f32);
 
 /// A GUI Widget for the Window
 pub enum Widget<'a> {
 	/// No widget - or a spacer widget. Grows to the largest size it can be.
 	Empty,
 	/// A vector graphic.
-	Graphic(&'a Iterator<Item = ::fonterator::PathOp>),
+	Graphic(&'a Iterator<Item = PathOp>),
 	/// A pixel image.
 	Image(&'a VFrame),
 	/// A text block, formatted in markdown.
@@ -30,7 +29,7 @@ pub enum Widget<'a> {
 	/// A background wrapper for another widget.
 	Color(&'a Widget<'a>, [u8;4]),
 	/// A listen wrapper for another widget.
-	Listen(&'a Widget<'a>, Box<FnMut(Input)>),
+	Listen(&'a Widget<'a>, Box<FnMut(Event)>),
 }
 
 // TODO: make into tree-generating macros.
@@ -74,12 +73,54 @@ impl<'a> Widget<'a> {
 }
 
 /// A builder for `Window`.
-pub struct WindowBuilder {
+struct WindowBuilder {
 	fog: Option<(f32, f32)>,
 	rgb: (u8, u8, u8),
 }
 
-impl WindowBuilder {
+fn init_a(screen: Screen, event: Event, dt: f32) {
+	let mut img = aci_png::decode(
+		include_bytes!("../res/button.png"),
+		::awi::render::afi::Srgba
+	).unwrap();
+	let wh = img.wh();
+	let px = img.pop().unwrap();
+	let _button = Texture(native.texture(wh, &px), wh.0, wh.1);
+
+	native.clear(self.rgb);
+	native.fog(self.fog);
+
+	let overlay_texture = Texture(
+		native.texture((1,1), &VFrame(vec![255, 0, 0, 200])),
+		1, 1);
+	let overlay_model = native.model(&[
+		-1.0, -1.0, 0.0, 1.0,
+		-1.0, 1.0, 0.0, 1.0,
+		1.0, 1.0, 0.0, 1.0,
+		1.0, -1.0, 0.0, 1.0
+	], vec![(0, 4)]);
+	let texcoords = native.texcoords(&[
+		0.0, 0.0, 1.0, 1.0,
+		0.0, 1.0, 1.0, 1.0,
+		1.0, 1.0, 1.0, 1.0,
+		1.0, 0.0, 1.0, 1.0
+	]);
+	let overlay = Sprite(native.shape_texture(&overlay_model,
+		Transform::IDENTITY, &overlay_texture.0, texcoords,
+		true, false, false));
+
+	Window {
+		since_frame: 0.0,
+		minsize: 40, aspect: 0.0, _button,
+		seconds: 0.0, fps_counter: 0, fps: 0,
+		font: ::gui::Font::new(::gui::DEFAULT_FONT).unwrap(),
+		textures: vec![], models: vec![], overlay_texture,
+		overlay, layout: Grid { grid: vec![], widget: 0 },
+		widgets: vec![], overlay_update: false,
+	}	
+}
+
+/*impl WindowBuilder {
 	/// A new `WindowBuilder`.
 	pub fn new() -> Self {
 		WindowBuilder {
@@ -101,64 +142,44 @@ impl WindowBuilder {
 	}
 
 	/// Finish building the `Window`.
-	pub fn finish<'a>(self) -> Window<'a> {
-		let mut native = new_display().unwrap();
+	pub fn start<'a>(self) -> Result<(), ScreenError> {
+		
 
-		let mut img = aci_png::decode(
-			include_bytes!("../res/button.png"),
-			::awi::render::afi::Rgba
-		).unwrap();
-		let wh = img.wh();
-		let px = img.pop().unwrap();
-		let _button = Texture(native.texture(wh, &px), wh.0, wh.1);
+		AwiScreen::start(&mut |screen, event, dt| {
+			let screen = Screen(screen);
 
-		native.color(self.rgb);
-		native.fog(self.fog);
+			
+		})?;
 
-		let overlay_texture = Texture(
-			native.texture((1,1), &VFrame(vec![255, 0, 0, 200])),
-			1, 1);
-		let overlay_model = native.model(&[
-			-1.0, -1.0, 0.0, 1.0,
-			-1.0, 1.0, 0.0, 1.0,
-			1.0, 1.0, 0.0, 1.0,
-			1.0, -1.0, 0.0, 1.0
-		], vec![(0, 4)]);
-		let texcoords = native.texcoords(&[
-			0.0, 0.0, 1.0, 1.0,
-			0.0, 1.0, 1.0, 1.0,
-			1.0, 1.0, 1.0, 1.0,
-			1.0, 0.0, 1.0, 1.0
-		]);
-		let overlay = Sprite(native.shape_texture(&overlay_model,
-			Transform::IDENTITY, &overlay_texture.0, texcoords,
-			true, false, false));
+		Ok(())
+	}
+}*/
 
-		Window {
-			window: native, time: 0.0,
-			clock: Clock::new(), since_clock: 0.0, since_frame: 0.0,
-			minsize: 64, aspect: 0.0, _button,
-			seconds: 0.0, fps_counter: 0, fps: 0,
-			font: ::gui::Font::new(::gui::DEFAULT_FONT).unwrap(),
-			textures: vec![], models: vec![], overlay_texture,
-			overlay, layout: Grid { grid: vec![], widget: 0 },
-			widgets: vec![], overlay_update: false,
-		}
+/// Connection to a computer/phone screen.
+pub struct Screen<Ctx>(&'static mut AwiScreen<Window<'static, Ctx>>)
+	where Ctx: Default;
+
+impl<T> Screen<T> {
+	pub fn start() -> Result<(), ScreenError> {
+		let run: Activity = init_a;
+
+		AwiScreen::<Window>::start(&mut |screen, event, dt| {
+			let screen = Screen(screen);
+
+			
+		})
 	}
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 struct Grid {
 	grid: Vec<Vec<Grid>>,
 	widget: u16,
 }
 
 /// Window represents a connection to a display that can also recieve input.
-pub struct Window<'a> {
-	pub(crate) window: Box<Display>,
-	time: f32,
-	clock: Clock,
-	since_clock: f32,
+#[derive(Default)]
+pub struct Window<'a, Ctx> where Ctx: Default {
 	since_frame: f32,
 	minsize: u16,
 	aspect: f32,
@@ -179,6 +200,8 @@ pub struct Window<'a> {
 	overlay_update: bool,
 	layout: Grid,
 	widgets: Vec<Widget<'a>>,
+	// Context
+	pub ctx: Ctx,
 }
 
 pub trait WindowFunctions {
@@ -196,7 +219,15 @@ impl<'a> WindowFunctions for Window<'a> {
 	}
 }
 
-impl<'a> Window<'a> {
+impl<'a, Ctx> Window<'a, Ctx> where Ctx: Default {
+/*	/// Start rendering to the screen.
+	pub fn start(fog: [f32; 2], bg: [u8; 3]) -> Result<(), ScreenError> {
+		WindowBuilder::new()
+			.fog(fog[0], fog[1])
+			.background((bg[0], bg[1], bg[2]))
+			.start()
+	}*/
+
 	/// Update fog distance.
 	pub fn fog(&mut self, fog: Option<(f32, f32)>) {
 		self.window.fog(fog);
@@ -204,7 +235,7 @@ impl<'a> Window<'a> {
 
 	/// Set the background color of the window.
 	pub fn background(&mut self, rgb: (u8, u8, u8)) -> () {
-		self.window.color(rgb);
+		self.window.clear(rgb);
 	}
 
 	/// Adjust the location and direction of the camera.
@@ -220,31 +251,40 @@ impl<'a> Window<'a> {
 	/// Update the window and return the user input.  This should run in a
 	/// loop.  Returns `None` when done looping through input.  After `None`
 	/// is returned, the next call will update the screen.
-	pub fn update(&mut self) -> Option<Input> {
-		// Update Screen
-		let mut input = self.window.update();
+	pub fn update(&mut self) -> Option<Event> {
+		let mut input = self.window.input();
 
-		if input == None && self.aspect == 0.0 {
-			input = Some(Input::Resize);
+		if input == None {
+			// Update Screen
+			self.since_frame = self.window.update();
+			self.seconds += self.since_frame;
+
+			// Count FPS
+			self.fps_counter += 1;
+
+			if self.seconds >= 1.0 {
+				self.seconds -= 1.0;
+				self.fps = self.fps_counter;
+				self.fps_counter = 0;
+				println!("{}", self.fps);
+			}
 		}
 
-		if input == Some(Input::Resize) {
+		if input == None && self.aspect == 0.0 {
+			input = Some(Event::Resize);
+		}
+
+		if input == Some(Event::Resize) {
 			let wh = self.wh();
 			let (w, h) = (wh.0 as f32, wh.1 as f32);
 
 			self.window.resize(wh);
-
-//			(self.minsize.1).0 = 2.0 * (self.minsize.0 as f32) / w;
-//			(self.minsize.1).1 = 2.0 * (self.minsize.0 as f32) / h;
 			self.aspect = h / w;
-
 			self.overlay_update = true;
 		}
 
 		if self.overlay_update {
 			let wh = self.wh();
-			let mut surface = surface::Surface::new(wh.0 as u32, wh.1 as u32);
-
 			let mut dimensions: Vec<(u16, Vec<u16>)> = vec![];
 
 			// Calculate widths heights of each one.
@@ -262,26 +302,7 @@ impl<'a> Window<'a> {
 							// Loop through the glyphs in the text.
 							for g in self.font.glyphs(string, (self.minsize as f32, self.minsize as f32)) {
 								// Draw the glyph
-								for i in g.0.draw(x, 0.0) {
-									match i {
-										PathOp::MoveTo(x, y) => {
-											surface.move_to(x, y);
-											println!("Move To: {} {}", x, y);
-										}
-										PathOp::LineTo(x, y) => {
-											surface.line_to(x, y);
-											println!("Line To: {} {}", x, y);
-										}
-										PathOp::QuadTo(x, y, cx, cy) => {
-											surface.quad_to(x, y, cx, cy);
-											println!("Quad To: {} {} {} {}", x, y, cx, cy);
-										}
-										PathOp::Close => {
-											println!("Close");
-											surface.draw(*color);
-										}
-									}
-								}
+								self.window.draw(g.0.draw(x, 0.0), *color);
 
 								// Position next glyph
 								x += g.1;
@@ -308,8 +329,9 @@ impl<'a> Window<'a> {
 				1.0, 1.0, 1.0, 1.0,
 				1.0, 0.0, 1.0, 1.0
 			]);
+			let overlay_texture = self.window.draw_update();
 			self.window.set_texture(&mut self.overlay_texture.0, wh,
-				&VFrame(surface.to_vec())
+				&overlay_texture
 			);
 			{
 				self.window.drop_shape(&self.overlay.0);
@@ -323,26 +345,10 @@ impl<'a> Window<'a> {
 			self.overlay_update = false;
 		}
 
-		// Update how much time has passed since previous frame.
-		if input.is_none() {
-			let old_time = self.since_clock;
-			self.since_clock = self.clock.since();
-			self.since_frame = self.since_clock - old_time;
-		}
-
-		// Count FPS
-		self.fps_counter += 1;
-
-		if self.since_clock >= self.seconds {
-			self.fps = self.fps_counter;
-			self.fps_counter = 0;
-			self.seconds += 1.0;
-		}
-
 		input
 	}
 
-	/// Returns a number between 0-1. This function is used for animations.
+/*	/// Returns a number between 0-1. This function is used for animations.
 	/// It will take rate_spr seconds to go from 0 to 1. 
 	pub fn pulse_half_linear(&self, rate_spr: f32) -> f32 {
 		self.time.pulse_half_linear(rate_spr)
@@ -369,7 +375,7 @@ impl<'a> Window<'a> {
 	/// the beginning and end of the animation slower than the middle.
 	pub fn pulse_full_smooth(&self, rate_spr: f32) -> f32 {
 		self.time.pulse_full_smooth(rate_spr)
-	}
+	}*/
 
 	/// Get the time passed since the previous window frame.
 	pub fn since(&self) -> f32 {

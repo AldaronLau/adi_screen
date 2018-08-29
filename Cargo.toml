@@ -29,15 +29,6 @@ categories = ["gui", "game-engines", "hardware-support", "multimedia::video",
 	"rendering::graphics-api"]
 
 [dependencies]
-adi_clock = "0.3"
 awi = { path = "../awi" }
 aci_png = "0.7"
 fonterator = "0.1"
-# TODO: This is for footile.
-libc = "0.2"
-palette = "0.2"
-# footile = { version = "0.0.10", path = "footile" } # TODO: Use real footile.
-
-# TODO: This is for footile.
-[build-dependencies]
-cc = "1.0"
