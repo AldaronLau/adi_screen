@@ -107,11 +107,10 @@ impl ModelBuilder {
 	}
 
 	/// Create the model / close the path.
-	pub fn close<T>(self, screen: &mut Screen<T>)
-		-> (Vec<f32>, Vec<(u32, u32)>)
+	pub fn close<T>(self, screen: &mut Screen<T>) -> Model
 		where T: Default
 	{
-		(self.vertices, self.fans)
+		screen.model(self.vertices.as_slice(), self.fans)
 
 /*		Model(screen.model(self.vertices.as_slice(), self.fans),
 			if self.colors.is_empty() {
@@ -129,9 +128,9 @@ impl ModelBuilder {
 	}
 }
 
-/// A collection of indices and vertices
+/*/// A collection of indices and vertices
 pub struct Model(pub(crate) adi_gpu::Model,
 	pub(crate) Option<adi_gpu::Gradient>,
 	pub(crate) Option<adi_gpu::TexCoords>,
 	pub(crate) Option<[f32; 4]>,
-	pub(crate) Option<f32>);
+	pub(crate) Option<f32>);*/
