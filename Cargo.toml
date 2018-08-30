@@ -14,14 +14,14 @@
 
 [package]
 name = "adi_screen"
-version = "0.12.0"
+version = "0.13.0"
 authors = [
 	"Jeron A. Lau <jeron.lau@plopgrizzly.com>",
 ]
 license = "MIT / BSL-1.0"
-documentation = "https://docs.rs/adi_screen"
-homepage = "https://gitlab.com/plopgrizzly/adi/"
-repository = "https://gitlab.com/plopgrizzly/adi/adi_screen"
+documentation = "https://docs.rs/adi"
+homepage = "https://gitlab.com/plopgrizzly/adi"
+repository = "https://github.com/plopgrizzly/adi"
 readme = "README.md"
 description = "Interface with a computer/phone screen screen to render graphics."
 keywords = [ "vulkan", "graphics", "gui", "hardware", "rendering" ]
@@ -29,6 +29,3 @@ categories = ["gui", "game-engines", "hardware-support", "multimedia::video",
 	"rendering::graphics-api"]
 
 [dependencies]
-awi = { path = "../awi" }
-aci_png = "0.7"
-fonterator = "0.1"
